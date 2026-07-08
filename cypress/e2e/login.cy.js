@@ -1,17 +1,33 @@
-describe('Login Test', () => {
+import LoginPage from '../pages/LoginPage'
 
-  it('Login with valid credentials', () => {
+describe('SauceDemo Login', () => {
 
-    cy.visit('https://www.saucedemo.com/')
+    const login = new LoginPage()
 
-    cy.get('[data-test="username"]').type('standard_user')
+    let users
 
-    cy.get('[data-test="password"]').type('secret_sauce')
+    before(() => {
+        cy.fixture('users').then((data) => {
+            users = data
+        })
+    })
 
-    cy.get('[data-test="login-button"]').click()
+    beforeEach(() => {
+        login.visit()
+    })
 
-    cy.url().should('include', '/inventory.html')
+    it('should login with valid credentials', () => {
 
-  })
+        login.login(
+            users.standardUser.username,
+            users.standardUser.password
+        )
+
+        cy.url().should('include', '/inventory.html')
+
+        cy.get('.title')
+            .should('have.text', 'Products')
+
+    })
 
 })
